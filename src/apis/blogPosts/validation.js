@@ -20,30 +20,36 @@ const blogPostSchema = {
       errorMessage: 'cover is mandatory'
     }
   },
-  value: {
-    in: ['body.readTime'],
-    isString: {
+  readTime: {
+    in: ['body'],
+    isObject: {
+      errorMessage: 'readTime must be defined in body as object type'
+    }
+  },
+  'readTime.value': {
+    in: ['body'],
+    isInt: {
       errorMessage: 'must enter a unit of time'
     }
   },
-  unit: {
+  'readTime.unit': {
     in: ['body'],
-    isInteger: {
+    isString: {
       errorMessage: 'must enter a number'
     }
   },
-  author: {
-    name: {
-      in: ['body'],
-      isString: {
-        errorMessage: 'must enter a name'
-      }
-    },
-    avatar: {
-      in: ['body'],
-      isString: {
-        errorMessage: 'enter your avatar here'
-      }
+
+  'author.name': {
+    in: ['body'],
+    isString: {
+      errorMessage: 'must enter a name'
+    }
+  },
+
+  'author.avatar': {
+    in: ['body'],
+    isURL: {
+      errorMessage: 'enter your avatar here'
     }
   },
   content: {

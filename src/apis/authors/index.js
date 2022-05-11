@@ -86,7 +86,7 @@ authorsRouter.put('/:userId', (req, res) => {
   res.send(updatedAuthor)
 })
 
-authorsRouter.delete('/:userId', (req, res) => {
+authorsRouter.delete('/:Id', (req, res) => {
   const authors = JSON.parse(fs.readFileSync(authorsJSONPath))
 
   const remainingAuthors = authors.filter(

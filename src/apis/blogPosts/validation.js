@@ -20,18 +20,16 @@ const blogPostSchema = {
       errorMessage: 'cover is mandatory'
     }
   },
-  readtime: {
-    value: {
-      in: ['body'],
-      isString: {
-        errorMessage: 'must enter a unit of time'
-      }
-    },
-    unit: {
-      in: ['body'],
-      isInteger: {
-        errorMessage: 'must enter a number'
-      }
+  value: {
+    in: ['body.readTime'],
+    isString: {
+      errorMessage: 'must enter a unit of time'
+    }
+  },
+  unit: {
+    in: ['body'],
+    isInteger: {
+      errorMessage: 'must enter a number'
     }
   },
   author: {

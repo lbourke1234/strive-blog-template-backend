@@ -5,6 +5,8 @@ import fs from 'fs'
 import uniqid from 'uniqid'
 import createError from 'http-errors'
 import { checkBlogPostsSchema, checkValidationResult } from './validation.js'
+import { saveBlogPostCoverPhoto } from '../../lib/fs-tools.js'
+import multer from 'multer'
 
 const blogPostsRouter = express.Router()
 
@@ -31,6 +33,32 @@ blogPostsRouter.post(
       writeBlogPost(blogPosts)
 
       res.send(newBlogPost)
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
+blogPostsRouter.post(
+  '/:postId/uploadCover',
+  multer({}).single('cover'),
+  async (req, res, next) => {
+    try {
+      console.log('File: ', req.file)
+      await saveBlogPostCoverPhoto(req.file.originalname, req.file.buffer)
+      res.send()
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
+blogPostsRouter.post(
+  '/blogPosts/:postId/uploadCover',
+  async (req, res, next) => {
+    try {
+      console.log('FILE: ', req.file)
+      await saveBlogPostCoverPhoto(req.file, req.file.buffer)
     } catch (error) {
       next(error)
     }

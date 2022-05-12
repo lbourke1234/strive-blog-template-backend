@@ -1,8 +1,12 @@
 import express from 'express'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
-import fs from 'fs'
+// import fs from 'fs-extra'
 import uniqid from 'uniqid'
+import multer from 'multer'
+// import { getAuthors } from '../../lib/fs-tools'
+import { saveAuthorsAvatar } from '../../lib/fs-tools.js'
+// import fs from 'fs-extra'
 
 const authorsRouter = express.Router()
 
@@ -19,9 +23,13 @@ const authorsRouter = express.Router()
 // console.log(authorsJSONPath)
 
 const authorsJSONPath = join(
-  dirname(fileURLToPath(import.meta.url)),
-  'authors.json'
+  dirname(dirname(dirname(fileURLToPath(import.meta.url)))),
+  '/data/authors.json'
 )
+
+// const getAuthors = async () => {
+//   fs.readFile(authorsJSONPath)
+// }
 
 authorsRouter.get('/', (req, res) => {
   const fileContent = fs.readFileSync(authorsJSONPath)
@@ -56,6 +64,20 @@ authorsRouter.post('/', (req, res) => {
 
   res.status(201).send({ id: newAuthor.id })
 })
+
+authorsRouter.post(
+  '/:postId/uploadAvatar',
+  multer({}).single('avatar'),
+  async (req, res, next) => {
+    try {
+      console.log('FILE: ', req.file)
+      await saveAuthorsAvatar(req.file.id, req.file.buffer)
+      res.send()
+    } catch (error) {
+      next(error)
+    }
+  }
+)
 
 authorsRouter.get('/:userId', (req, res) => {
   const userID = req.params.userId

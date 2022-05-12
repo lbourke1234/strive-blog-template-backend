@@ -92,6 +92,17 @@ blogPostsRouter.get('/:postId', (req, res, next) => {
   }
 })
 
+blogPostsRouter.get('/:postId/comments', (req, res, next) => {
+  try {
+    const rootFolder = process.cwd()
+    const commentsListPath = join(rootFolder, '/src/data/comments.json')
+    const comments = fs.readFileSync(commentsListPath)
+    res.send(comments)
+  } catch (error) {
+    next(error)
+  }
+})
+
 blogPostsRouter.put(
   '/:postId',
   checkBlogPostsSchema,

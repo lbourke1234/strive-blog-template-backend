@@ -12,7 +12,7 @@ import {
 
 const server = express()
 
-const port = 3001
+const port = 5001
 
 server.use(cors())
 server.use(express.json())

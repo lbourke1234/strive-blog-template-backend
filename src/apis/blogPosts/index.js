@@ -7,16 +7,39 @@ import createError from 'http-errors'
 import { checkBlogPostsSchema, checkValidationResult } from './validation.js'
 import { saveBlogPostCoverPhoto } from '../../lib/fs-tools.js'
 import multer from 'multer'
+import { pipeline } from 'stream'
+import { getPDFReadableStream } from '../../lib/pdf-tools.js'
 
 const blogPostsRouter = express.Router()
 
 const blogPostsJSONPath = join(
-  dirname(fileURLToPath(import.meta.url)),
-  'blogPosts.json'
+  dirname(dirname(fileURLToPath(import.meta.url))),
+  '../data/blogPosts.json'
 )
 const getBlogPosts = () => JSON.parse(fs.readFileSync(blogPostsJSONPath))
 const writeBlogPost = (newBlogPost) =>
   fs.writeFileSync(blogPostsJSONPath, JSON.stringify(newBlogPost))
+
+blogPostsRouter.get('/:postId/pdf', async (req, res, next) => {
+  try {
+    res.setHeader('Content-Disposition', 'attachment; filename=pdfname.pdf')
+
+    const blogPosts = getBlogPosts()
+
+    const chosenBlogPost = blogPosts.find(
+      (blog) => blog.id === req.params.postId
+    )
+    const source = getPDFReadableStream(chosenBlogPost)
+    const destination = res
+
+    pipeline(source, destination, (err) => {
+      if (err) console.log('pipeline error', err)
+    })
+  } catch (error) {
+    console.log('pdf catch')
+    next(error)
+  }
+})
 
 blogPostsRouter.post(
   '/',
@@ -68,6 +91,7 @@ blogPostsRouter.post(
 blogPostsRouter.get('/', (req, res, next) => {
   try {
     const blogPosts = getBlogPosts()
+    console.log(blogPosts)
 
     res.send(blogPosts)
   } catch (error) {
